@@ -10,6 +10,9 @@
 		<a href="{{url_for('categoryItems', categoryName = category.name) }}">{{category.name}}</a>
 	</div>
 	{% endfor %}
+	{% if not session['logged_in'] %}
+	<a href="{{url_for('login') }}">login</a>
+	{% endif %}
 
 </body>
 </html>

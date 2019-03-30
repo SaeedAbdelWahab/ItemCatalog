@@ -1,44 +1,66 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, session, flash
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from database import Base, Category, Item
-app = Flask(__name__)
+from database import Base, Category, Item, User
+import os
 
 engine = create_engine('sqlite:///CatalogApp.db')
 Base.metadata.bind = engine
-
 DBSession = sessionmaker(bind=engine)
+app = Flask(__name__)
+
+def verify_password(username, password):
+    dbsession = DBSession()
+    user = dbsession.query(User).filter_by(username = username).first()
+    if not user or not user.verify_password(password):
+        return False
+    return True
+
+@app.route('/login', methods=['POST','GET'])
+def login():
+	if request.method == 'POST' :
+		username = request.form['username']
+		password = request.form['password']
+		if verify_password(username, password):
+			session['logged_in'] = True
+			return redirect(url_for('catalogHome'))
+		else:
+			flash('wrong password!')
+			return render_template('login.html')
+			
+	else :
+		return render_template('login.html')
 
 
 @app.route('/')
 def catalogHome():
-	session = DBSession()
-	categories = session.query(Category)
+	dbsession = DBSession()
+	categories = dbsession.query(Category)
 	return render_template('index.html', categories=categories)
 
 @app.route('/catalog/<string:categoryName>')
 def categoryItems(categoryName):
-	session = DBSession()
-	category = session.query(Category).filter_by(name=categoryName).first() 
-	items = session.query(Item).filter_by(category_id=category.id)
+	dbsession = DBSession()
+	category = dbsession.query(Category).filter_by(name=categoryName).first() 
+	items = dbsession.query(Item).filter_by(category_id=category.id)
 	return render_template('category.html', items = items, category = category)
 
 @app.route('/catalog/<string:categoryName>/<string:itemName>')
 def getItem(categoryName, itemName):
-	session = DBSession()
-	category = session.query(Category).filter_by(name=categoryName).first() 
-	item = session.query(Item).filter_by(name = itemName, category_id = category.id).first()
+	dbsession = DBSession()
+	category = dbsession.query(Category).filter_by(name=categoryName).first() 
+	item = dbsession.query(Item).filter_by(name = itemName, category_id = category.id).first()
 	return render_template('item.html', item = item, category = category)
 
 @app.route('/catalog/<string:categoryName>/new', methods=['GET','POST'])
 def addItem(categoryName):
 	if request.method == 'POST':
-		session = DBSession()
-		category = session.query(Category).filter_by(name=categoryName).first()
+		dbsession = DBSession()
+		category = dbsession.query(Category).filter_by(name=categoryName).first()
 		newItem = Item(
 			name=request.form['name'], category_id=category.id, description = request.form['description'])
-		session.add(newItem)
-		session.commit()
+		dbsession.add(newItem)
+		dbsession.commit()
 		return redirect(url_for('categoryItems', categoryName=categoryName))
 	else :
 		return render_template('newItem.html', categoryName = categoryName)
@@ -46,16 +68,16 @@ def addItem(categoryName):
 @app.route('/catalog/<string:categoryName>/<string:itemName>/edit',
            methods=['GET', 'POST'])
 def editItem(categoryName, itemName):
-    session = DBSession()
-    category = session.query(Category).filter_by(name=categoryName).first()
-    editedItem = session.query(Item).filter_by(name=itemName, category_id = category.id).first()
+    dbsession = DBSession()
+    category = dbsession.query(Category).filter_by(name=categoryName).first()
+    editedItem = dbsession.query(Item).filter_by(name=itemName, category_id = category.id).first()
     if request.method == 'POST':
         if request.form['name']:
             editedItem.name = request.form['name']
         if request.form['description']:
             editedItem.description = request.form['description']
-        session.add(editedItem)
-        session.commit()
+        dbsession.add(editedItem)
+        dbsession.commit()
         return redirect(url_for('categoryItems', categoryName = categoryName))
     else:
         return render_template(
@@ -65,12 +87,12 @@ def editItem(categoryName, itemName):
 @app.route('/catalog/<string:categoryName>/<string:itemName>/delete',
            methods=['GET', 'POST'])
 def deleteItem(categoryName, itemName):
-    session = DBSession()
-    category = session.query(Category).filter_by(name=categoryName).first()
-    itemToDelete = session.query(Item).filter_by(name=itemName, category_id = category.id).first()
+    dbsession = DBSession()
+    category = dbsession.query(Category).filter_by(name=categoryName).first()
+    itemToDelete = dbsession.query(Item).filter_by(name=itemName, category_id = category.id).first()
     if request.method == 'POST':
-        session.delete(itemToDelete)
-        session.commit()
+        dbsession.delete(itemToDelete)
+        dbsession.commit()
         return redirect(url_for('categoryItems', categoryName = categoryName))
     else:
         return render_template('deletedItem.html',category = category,  item=itemToDelete)
@@ -78,4 +100,5 @@ def deleteItem(categoryName, itemName):
 
 if __name__ == '__main__':
     app.debug = True
+    app.secret_key = os.urandom(12)
     app.run(host='0.0.0.0', port=8000)

@@ -1,0 +1,21 @@
+<html>
+	<head>
+	</head>
+	<body>
+		<h1> Hello ! </h1>
+		{% with messages = get_flashed_messages()[-1] %}
+		  {% if messages %}
+		    <ul class=flashes>
+		      <li>{{ messages }}</li>
+		    </ul>
+		  {% endif %}
+		{% endwith %}
+		<form action="{{ url_for('login')}}" method = 'post'>
+			<p>Username:</p>
+			<input type ='text' size='30' name='username' value = 'admin'>
+			<p>Password:</p>
+			<input type ='Password' size='30' name='password' value = 'admin'>
+			<input type='submit' value='login'>
+		</form>
+	</body>
+</html>
