@@ -1,10 +1,29 @@
 from flask import Flask
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+from database import Base, Category, Item
 app = Flask(__name__)
+
+engine = create_engine('sqlite:///CatalogApp.db')
+Base.metadata.bind = engine
+
+DBSession = sessionmaker(bind=engine)
+session = DBSession()
 
 
 @app.route('/')
-def HelloWorld():
-    return "Hello World"
+def catalogHome():
+	categories = session.query(Category).first()
+	return category.name
+
+
+
+    # items = session.query(Item).filter_by(category_id=category.id)
+    # output = ''
+    # for i in items:
+    #     output += i.name
+    #     output += '</br>'
+    # return output
 
 if __name__ == '__main__':
     app.debug = True
