@@ -23,6 +23,13 @@ def categoryItems(categoryName):
 	items = session.query(Item).filter_by(category_id=category.id)
 	return render_template('category.html', items = items, category = category)
 
+@app.route('/catalog/<string:categoryName>/<string:itemName>')
+def getItem(categoryName, itemName):
+	session = DBSession()
+	category = session.query(Category).filter_by(name=categoryName).first() 
+	item = session.query(Item).filter_by(name = itemName, category_id = category.id).first()
+	return render_template('item.html', item = item, category = category)
+
 @app.route('/catalog/<string:categoryName>/new', methods=['GET','POST'])
 def addItem(categoryName):
 	if request.method == 'POST':
@@ -35,6 +42,38 @@ def addItem(categoryName):
 		return redirect(url_for('categoryItems', categoryName=categoryName))
 	else :
 		return render_template('newItem.html', categoryName = categoryName)
+
+@app.route('/catalog/<string:categoryName>/<string:itemName>/edit',
+           methods=['GET', 'POST'])
+def editItem(categoryName, itemName):
+    session = DBSession()
+    category = session.query(Category).filter_by(name=categoryName).first()
+    editedItem = session.query(Item).filter_by(name=itemName, category_id = category.id).first()
+    if request.method == 'POST':
+        if request.form['name']:
+            editedItem.name = request.form['name']
+        if request.form['description']:
+            editedItem.description = request.form['description']
+        session.add(editedItem)
+        session.commit()
+        return redirect(url_for('categoryItems', categoryName = categoryName))
+    else:
+        return render_template(
+            'editedItem.html', category = category, item = editedItem)
+
+
+@app.route('/catalog/<string:categoryName>/<string:itemName>/delete',
+           methods=['GET', 'POST'])
+def deleteItem(categoryName, itemName):
+    session = DBSession()
+    category = session.query(Category).filter_by(name=categoryName).first()
+    itemToDelete = session.query(Item).filter_by(name=itemName, category_id = category.id).first()
+    if request.method == 'POST':
+        session.delete(itemToDelete)
+        session.commit()
+        return redirect(url_for('categoryItems', categoryName = categoryName))
+    else:
+        return render_template('deletedItem.html',category = category,  item=itemToDelete)
 
 
 if __name__ == '__main__':

@@ -1,0 +1,17 @@
+<html>
+	<head>
+	</head>
+
+	<body>
+		<h1> Are you sure you want to delete {{item.name}}? </h1>
+
+		<form action="{{ url_for('deleteItem', categoryName = category.name, itemName = item.name)}}" method = 'post'>
+
+			<input type='submit', value = 'Delete'>
+
+		</form>
+
+		<a href = "{{url_for('categoryItems', categoryName = category.name)}}"> Cancel </a>
+	</body>
+
+</html>

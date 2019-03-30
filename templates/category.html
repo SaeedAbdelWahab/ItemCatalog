@@ -7,8 +7,7 @@
 	<h1>Items in {{category.name}}</h1>
 	{% for item in items %}
 	<div>
-		<p>Name : {{item.name}}</p>
-		<p>Description : {{item.description}}</p>
+		<a href = "{{url_for('getItem', categoryName = category.name, itemName = item.name)}}">{{item.name}}</a>
 	</div>
 	<br>
 	<br>
