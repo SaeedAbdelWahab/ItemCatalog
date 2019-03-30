@@ -8,22 +8,20 @@ engine = create_engine('sqlite:///CatalogApp.db')
 Base.metadata.bind = engine
 
 DBSession = sessionmaker(bind=engine)
-session = DBSession()
 
 
 @app.route('/')
 def catalogHome():
+	session = DBSession()
 	categories = session.query(Category)
-
 	return render_template('index.html', categories=categories)
 
-
-    # items = session.query(Item).filter_by(category_id=category.id)
-    # output = ''
-    # for i in items:
-    #     output += i.name
-    #     output += '</br>'
-    # return output
+@app.route('/catalog/<string:categoryName>', methods=['GET', 'POST'])
+def categoryItems(categoryName):
+	session = DBSession()
+	category = session.query(Category).filter_by(name=categoryName).first() 
+	items = session.query(Item).filter_by(category_id=category.id)
+	return render_template('category.html', items = items, category = category)
 
 if __name__ == '__main__':
     app.debug = True

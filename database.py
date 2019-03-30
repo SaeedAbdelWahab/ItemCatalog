@@ -14,7 +14,7 @@ class Category(Base):
     name = Column(String(250), nullable=False)
  
 class Item(Base):
-    __tablename__ = 'item'
+    __tablename__ = 'Item'
 
 
     name =Column(String(80), nullable = False)
