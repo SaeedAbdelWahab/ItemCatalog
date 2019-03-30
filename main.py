@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, render_template, request, redirect, url_for
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from database import Base, Category, Item
@@ -13,9 +13,9 @@ session = DBSession()
 
 @app.route('/')
 def catalogHome():
-	categories = session.query(Category).first()
-	return category.name
+	categories = session.query(Category)
 
+	return render_template('index.html', categories=categories)
 
 
     # items = session.query(Item).filter_by(category_id=category.id)

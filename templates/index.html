@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Catalog App</title>
+</head>
+<body>
+	<h1>Categories</h1>
+	{% for category in categories %}
+	<div>
+		<p>{{category.name}}</p>
+	</div>
+	{% endfor %}
+
+</body>
+</html>
