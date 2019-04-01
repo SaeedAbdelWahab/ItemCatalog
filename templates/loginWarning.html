@@ -20,22 +20,7 @@
 	    	</div>
 	    </nav>
 	    <div class="container">
-	    	<h3 class = "blue"> Edit {{item.name}} </h3>
-			<form action="{{ url_for('editItem', categoryName = category.name, itemName = item.name)}}" method = 'post'>
-		    	<div class="form-group">
-	      			<label> Name : </label>
-	      			<input type="text" class="form-control" name="name" value = '{{item.name }}'>
-	    		</div>
-	    		<div class="form-group">
-	      			<label> Description : </label>
-	      			<textarea class="form-control" name = "description" >{{item.description }}</textarea>
-	    		</div>
-	    		{% if session['logged_in'] %}
-	    		<button type="submit" class="btn btn-success">Edit</button>
-	    		{% endif %}
-				<a class="btn btn-default" href = "{{url_for('categoryItems', categoryName = category.name)}}"> Cancel </a>
-			</form>
-		</div>	
+			<h3 style="color:red;" > You need to login to complete this action </h3>
+	    </div>
 	</body>
-
 </html>

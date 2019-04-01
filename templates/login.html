@@ -1,21 +1,39 @@
 <html>
 	<head>
+		<link rel=stylesheet type=text/css href="{{ url_for('static', filename='bootstrap.css') }}">
+		<link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}">
+		<title>Catalog App</title>
 	</head>
 	<body>
-		<h1> Hello ! </h1>
-		{% with messages = get_flashed_messages()[-1] %}
-		  {% if messages %}
-		    <ul class=flashes>
-		      <li>{{ messages }}</li>
-		    </ul>
-		  {% endif %}
-		{% endwith %}
-		<form action="{{ url_for('login')}}" method = 'post'>
-			<p>Username:</p>
-			<input type ='text' size='30' name='username' value = 'admin'>
-			<p>Password:</p>
-			<input type ='Password' size='30' name='password' value = 'admin'>
-			<input type='submit' value='login'>
-		</form>
+		<nav class="navbar navbar-default">
+	    	<div class="container-fluid">
+	    		<div class = 'container wider-container'>
+		    		<div class="navbar-header">
+		      			<a class="navbar-brand site-title" href="{{url_for('catalogHome') }}">Catalog App</a>
+		    		</div>
+	    		</div>
+	    	</div>
+	    </nav>
+	    <div class="container">
+			<h3 class = "blue" > Login </h3>
+			<form action="{{ url_for('login')}}" method = 'post'>
+				<div class="form-group">
+	      			<label> Username : </label>
+	      			<input type="text" class="form-control" name="username" value= "admin">
+	    		</div>
+	    		<div class="form-group">
+	      			<label> Password : </label>
+	      			<input type="Password" class="form-control" name="password" value= "admin">
+	    		</div>
+	    		<button type="submit" class="btn btn-success">login</button>
+	    	</form>
+	    	{% with messages = get_flashed_messages()[-1] %}
+            	{% if messages %}
+                	<ul class=flashes>
+                    	<li style="color: red;">{{ messages }}</li>
+                   	</ul>
+                {% endif %}
+            {% endwith %}
+	    </div>
 	</body>
 </html>

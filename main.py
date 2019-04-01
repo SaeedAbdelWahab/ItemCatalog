@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, desc
 from sqlalchemy.orm import sessionmaker
 from database import Base, Category, Item, User
 import os
@@ -25,18 +25,27 @@ def login():
 			session['logged_in'] = True
 			return redirect(url_for('catalogHome'))
 		else:
-			flash('wrong password!')
+			flash('Wrong Credintials !')
 			return render_template('login.html')
-			
 	else :
 		return render_template('login.html')
+
+@app.route('/logout')
+def logout():
+	session['logged_in'] = False
+	return redirect(url_for('catalogHome'))
 
 
 @app.route('/')
 def catalogHome():
 	dbsession = DBSession()
 	categories = dbsession.query(Category)
-	return render_template('index.html', categories=categories)
+	items = dbsession.query(Item).order_by(desc('id')).limit(5)
+	dictionary = dict([(key.name, []) for key in items])
+	for i in range(5) :
+		dictionary[items[i].name] = dbsession.query(Category).filter_by(id = items[i].category_id).one()
+	print dictionary
+	return render_template('index.html', categories=categories, items = dictionary)
 
 @app.route('/catalog/<string:categoryName>')
 def categoryItems(categoryName):
@@ -54,48 +63,58 @@ def getItem(categoryName, itemName):
 
 @app.route('/catalog/<string:categoryName>/new', methods=['GET','POST'])
 def addItem(categoryName):
-	if request.method == 'POST':
-		dbsession = DBSession()
-		category = dbsession.query(Category).filter_by(name=categoryName).first()
-		newItem = Item(
-			name=request.form['name'], category_id=category.id, description = request.form['description'])
-		dbsession.add(newItem)
-		dbsession.commit()
-		return redirect(url_for('categoryItems', categoryName=categoryName))
+	if session['logged_in'] :
+		if request.method == 'POST':
+			dbsession = DBSession()
+			category = dbsession.query(Category).filter_by(name=categoryName).first()
+			newItem = Item(
+				name=request.form['name'], category_id=category.id, description = request.form['description'])
+			dbsession.add(newItem)
+			dbsession.commit()
+			return redirect(url_for('categoryItems', categoryName=categoryName))
+		else :
+			return render_template('newItem.html', categoryName = categoryName)
 	else :
-		return render_template('newItem.html', categoryName = categoryName)
+		return render_template('loginWarning.html')
 
 @app.route('/catalog/<string:categoryName>/<string:itemName>/edit',
            methods=['GET', 'POST'])
 def editItem(categoryName, itemName):
-    dbsession = DBSession()
-    category = dbsession.query(Category).filter_by(name=categoryName).first()
-    editedItem = dbsession.query(Item).filter_by(name=itemName, category_id = category.id).first()
-    if request.method == 'POST':
-        if request.form['name']:
-            editedItem.name = request.form['name']
-        if request.form['description']:
-            editedItem.description = request.form['description']
-        dbsession.add(editedItem)
-        dbsession.commit()
-        return redirect(url_for('categoryItems', categoryName = categoryName))
-    else:
-        return render_template(
-            'editedItem.html', category = category, item = editedItem)
+    if session['logged_in'] :
+        dbsession = DBSession()
+        category = dbsession.query(Category).filter_by(name=categoryName).first()
+        editedItem = dbsession.query(Item).filter_by(name=itemName, category_id = category.id).first()
+        if request.method == 'POST':
+            if request.form['name']:
+                editedItem.name = request.form['name']
+            if request.form['description']:
+                editedItem.description = request.form['description']
+            dbsession.add(editedItem)
+            dbsession.commit()
+            return redirect(url_for('categoryItems', categoryName = categoryName))
+        else:
+            return render_template(
+                'editedItem.html', category = category, item = editedItem)
+    else :
+        return render_template('loginWarning.html')
+
 
 
 @app.route('/catalog/<string:categoryName>/<string:itemName>/delete',
            methods=['GET', 'POST'])
 def deleteItem(categoryName, itemName):
-    dbsession = DBSession()
-    category = dbsession.query(Category).filter_by(name=categoryName).first()
-    itemToDelete = dbsession.query(Item).filter_by(name=itemName, category_id = category.id).first()
-    if request.method == 'POST':
-        dbsession.delete(itemToDelete)
-        dbsession.commit()
-        return redirect(url_for('categoryItems', categoryName = categoryName))
-    else:
-        return render_template('deletedItem.html',category = category,  item=itemToDelete)
+	if session['logged_in'] :
+	    dbsession = DBSession()
+	    category = dbsession.query(Category).filter_by(name=categoryName).first()
+	    itemToDelete = dbsession.query(Item).filter_by(name=itemName, category_id = category.id).first()
+	    if request.method == 'POST':
+	        dbsession.delete(itemToDelete)
+	        dbsession.commit()
+	        return redirect(url_for('categoryItems', categoryName = categoryName))
+	    else:
+	        return render_template('deletedItem.html',category = category,  item=itemToDelete)
+	else :
+	    return render_template('loginWarning.html')
 
 
 if __name__ == '__main__':

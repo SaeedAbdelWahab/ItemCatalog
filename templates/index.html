@@ -1,34 +1,54 @@
 <!DOCTYPE html>
 <html>
-<head>
-	<link rel=stylesheet type=text/css href="{{ url_for('static', filename='bootstrap.css') }}">
-	<link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}">
-	<title>Catalog App</title>
-</head>
-<body>
-	<nav class="navbar navbar-default">
-    	<div class="container-fluid">
-    		<div class = 'container wider-container'>
-	    		<div class="navbar-header">
-	      			<a class="navbar-brand site-title" href="#">Catalog App</a>
+	<head>
+		<link rel=stylesheet type=text/css href="{{ url_for('static', filename='bootstrap.css') }}">
+		<link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}">
+		<title>Catalog App</title>
+	</head>
+	<body>
+		<nav class="navbar navbar-default">
+	    	<div class="container-fluid">
+	    		<div class = 'container wider-container'>
+		    		<div class="navbar-header">
+		      			<a class="navbar-brand site-title" href="{{url_for('catalogHome') }}">Catalog App</a>
+		    		</div>
+		    		<div class="text-right">
+						{% if not session['logged_in'] %}
+						<a class="btn btn-primary login-button" href="{{url_for('login') }}">Login</a>
+						{% else %}
+						<a class="btn btn-primary login-button" href="{{url_for('logout') }}">Logout</a>
+						{% endif %}
+					</div>
 	    		</div>
-	    		<div class="text-right">
-					{% if not session['logged_in'] %}
-					<a class="btn btn-primary login-button" href="{{url_for('login') }}">Login</a>
-					{% endif %}
+	    	</div>
+	    </nav>
+		<div class="container">
+			<div class="row">
+				<div class="col-sm-4">
+					<h3 class = "blue">Categories</h3>
+					{% for category in categories %}
+					<div>
+						<a href="{{url_for('categoryItems', categoryName = category.name) }}" class="orange">{{category.name}}</a>
+					</div>
+					{% endfor %}
 				</div>
-    		</div>
-    	</div>
-    </nav>
-	<div class="container bordered">
-	    <div>
-			<h3>Categories</h3>
-			{% for category in categories %}
-			<div>
-				<a href="{{url_for('categoryItems', categoryName = category.name) }}">{{category.name}}</a>
+				<div class="col-sm-4">
+					<h3 class = "blue">Latest Items</h3>
+					{% for key, value in items.items() %}
+					<div>
+						<a href="{{url_for('getItem', itemName = key, categoryName = value.name) }}" class="orange">{{key}} </a><span style="color: grey;"> ({{value.name}})</span>
+					</div>
+					{% endfor %}
+				</div>
 			</div>
-			{% endfor %}
 		</div>
-	</div>
-</body>
+	</body>
+	<footer>
+		<div class="row container">
+			<hr>
+		  <div class="col-sm-12 text-center light_grey">
+			<p>Written by Saeed Abdel Wahab</p>
+		  </div>
+		</div>
+	</footer>
 </html>

@@ -1,18 +1,40 @@
 <html>
-<body>
-<h1> New item in {{categoryName}} </h1>
-
-<form action="{{url_for('addItem', categoryName = categoryName )}}" method = 'POST'>
-
-<p>Name:</p>
-<input type='text' size='30' name='name'>
-
-<p>Description:</p>
-<input type='text' size='50' name='description'>
-
-<input type='submit' value='Create'>
-
-</form>
-
-</body>
+	<head>
+		<link rel=stylesheet type=text/css href="{{ url_for('static', filename='bootstrap.css') }}">
+		<link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}">
+		<title>Catalog App</title>
+	</head>
+	<body>
+		<nav class="navbar navbar-default">
+	    	<div class="container-fluid">
+	    		<div class = 'container wider-container'>
+		    		<div class="navbar-header">
+		      			<a class="navbar-brand site-title" href="{{url_for('catalogHome') }}">Catalog App</a>
+		    		</div>
+		    		<div class="text-right">
+						{% if not session['logged_in'] %}
+						<a class="btn btn-primary login-button" href="{{url_for('login') }}">Login</a>
+						{% endif %}
+					</div>
+	    		</div>
+	    	</div>
+	    </nav>
+	    <div class="container">
+			<h3 class = "blue" > New item in {{categoryName}} </h3>
+			<form action="{{url_for('addItem', categoryName = categoryName )}}" method = 'POST'>
+				<div class="form-group">
+	      			<label> Name : </label>
+	      			<input type="text" class="form-control" name="name">
+	    		</div>
+	    		<div class="form-group">
+	      			<label> Description : </label>
+	      			<textarea class="form-control" name = "description" ></textarea>
+	    		</div>
+	    		{% if session['logged_in'] %}
+	    		<button type="submit" class="btn btn-success">Create</button>
+	    		{% endif %}
+	    		<a class="btn btn-default" href = "{{url_for('categoryItems', categoryName = categoryName)}}"> Cancel </a>
+	    	</form>
+	    </div>
+	</body>
 </html>
