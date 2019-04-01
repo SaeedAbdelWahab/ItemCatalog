@@ -1,0 +1,23 @@
+.container {
+	max-width: 700px;
+	margin: auto;
+}
+
+.wider-container
+{
+	max-width: 735px;
+}
+
+.site-title {
+	margin-top: 15px;
+	font-size: 35px;
+}
+
+.bordered {
+	border: 1px solid lightgrey;
+	border-radius: 5px;
+}
+
+.login-button{
+	margin-top: 25px;
+}
