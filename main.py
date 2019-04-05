@@ -44,7 +44,6 @@ def catalogHome():
 	dictionary = dict([(key.name, []) for key in items])
 	for i in range(5) :
 		dictionary[items[i].name] = dbsession.query(Category).filter_by(id = items[i].category_id).one()
-	print dictionary
 	return render_template('index.html', categories=categories, items = dictionary)
 
 @app.route('/catalog/<string:categoryName>')

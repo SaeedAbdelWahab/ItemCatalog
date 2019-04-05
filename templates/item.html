@@ -29,7 +29,6 @@
         	<a class="btn btn-success" href = "{{url_for('editItem', categoryName = category.name, itemName = item.name)}}">Edit</a>
 			<a class="btn btn-danger" href = "{{url_for('deleteItem', categoryName = category.name, itemName = item.name)}}">Delete</a>
 			{% endif %}
-			<a class="btn btn-default" href = "{{url_for('categoryItems', categoryName = category.name)}}"> Back</a>
         </div>	
 	</body>
 </html>
