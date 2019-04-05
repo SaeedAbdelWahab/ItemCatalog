@@ -20,8 +20,8 @@
 	    	</div>
 	    </nav>
 	    <div class="container">
-			<h3 class = "blue" > New item in {{categoryName}} </h3>
-			<form action="{{url_for('addItem', categoryName = categoryName )}}" method = 'POST'>
+			<h3 class = "blue" > New item</h3>
+			<form action="{{url_for('addItem', categoryName = 'dummy' )}}" method = 'POST'>
 				<div class="form-group">
 	      			<label> Name : </label>
 	      			<input type="text" class="form-control" name="name">
@@ -30,10 +30,21 @@
 	      			<label> Description : </label>
 	      			<textarea class="form-control" name = "description" ></textarea>
 	    		</div>
+	    		<div class="form-group">
+	      			<label> Category : </label>
+	      			<select class="form-control" name="categoryName">
+	      				{% for category in categories%}
+	      				{% if category.name == categoryName %}
+				        <option selected="selected">{{category.name}}</option>
+				        {% else %}
+				        <option>{{category.name}}</option>
+				        {% endif %}
+				        {% endfor %}
+			      	</select>
+	    		</div>
 	    		{% if session['logged_in'] %}
 	    		<button type="submit" class="btn btn-success">Create</button>
 	    		{% endif %}
-	    		<a class="btn btn-default" href = "{{url_for('categoryItems', categoryName = categoryName)}}"> Cancel </a>
 	    	</form>
 	    </div>
 	</body>

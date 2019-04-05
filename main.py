@@ -61,10 +61,13 @@ def getItem(categoryName, itemName):
 	return render_template('item.html', item = item, category = category)
 
 @app.route('/catalog/<string:categoryName>/new', methods=['GET','POST'])
-def addItem(categoryName):
+def addItem(categoryName = ""):
+	dbsession = DBSession()
 	if session['logged_in'] :
 		if request.method == 'POST':
-			dbsession = DBSession()
+			print ("im hereee")
+			categoryName = request.form['categoryName']
+			print (categoryName)
 			category = dbsession.query(Category).filter_by(name=categoryName).first()
 			newItem = Item(
 				name=request.form['name'], category_id=category.id, description = request.form['description'])
@@ -72,7 +75,8 @@ def addItem(categoryName):
 			dbsession.commit()
 			return redirect(url_for('categoryItems', categoryName=categoryName))
 		else :
-			return render_template('newItem.html', categoryName = categoryName)
+			categories = dbsession.query(Category).all();
+			return render_template('newItem.html', categoryName = categoryName, categories = categories)
 	else :
 		return render_template('loginWarning.html')
 

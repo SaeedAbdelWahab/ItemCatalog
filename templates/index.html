@@ -39,6 +39,10 @@
 						<a href="{{url_for('getItem', itemName = key, categoryName = value.name) }}" class="orange">{{key}} </a><span style="color: grey;"> ({{value.name}})</span>
 					</div>
 					{% endfor %}
+					{% if session['logged_in'] %}
+						<br>
+						<a class="btn btn-success" href = "{{url_for('addItem', categoryName = 'Soccer') }}">Create New Item</a>
+					{% endif %}
 				</div>
 			</div>
 		</div>
