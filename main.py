@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, session, flash
+from flask import Flask, render_template, request, redirect, url_for, session, flash, jsonify
 from sqlalchemy import create_engine, desc
 from sqlalchemy.orm import sessionmaker
 from database import Base, Category, Item, User
@@ -231,6 +231,18 @@ def deleteItem(categoryName, itemName):
 	else :
 		return render_template('loginWarning.html')
 
+@app.route('/catalog.json')
+def getData() :
+	dbsession = DBSession()
+	categories = dbsession.query(Category).all()
+	serializedCategories = [i.serialize for i in categories]
+	items = dbsession.query(Item).all()
+	serializedItems = [i.serialize for i in items]
+	for item in serializedItems :
+		for category in serializedCategories :
+			if item['category_id'] == category['id'] :
+				category['items'].append(item)
+	return jsonify(Categories= serializedCategories)
 
 if __name__ == '__main__':
 	app.debug = True

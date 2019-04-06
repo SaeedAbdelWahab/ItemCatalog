@@ -31,6 +31,14 @@ class Category(Base):
    
     id = Column(Integer, primary_key=True)
     name = Column(String(250), nullable=False)
+    @property
+    def serialize(self):
+       
+       return {
+           'id'         : self.id,
+           'name'         : self.name,            
+           'items'    : []
+       }
 
  
 class Item(Base):
@@ -51,6 +59,7 @@ class Item(Base):
            'name'         : self.name,
            'description'         : self.description,
            'id'         : self.id,
+           'category_id' : self.category_id
        }
  
 
