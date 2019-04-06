@@ -5,6 +5,7 @@ from database import Base, Category, Item, User
 import os
 import random
 import string
+from collections import OrderedDict 
 
 from oauth2client.client import flow_from_clientsecrets
 from oauth2client.client import FlowExchangeError
@@ -153,10 +154,10 @@ def logout():
 def catalogHome():
 	dbsession = DBSession()
 	categories = dbsession.query(Category)
-	items = dbsession.query(Item).order_by(desc('id')).limit(5)
-	dictionary = dict([(key.name, []) for key in items])
+	items = dbsession.query(Item).order_by(desc('time_created')).limit(5)
+	dictionary = OrderedDict() 
 	for i in range(5) :
-		dictionary[items[i].name] = dbsession.query(Category).filter_by(id = items[i].category_id).one()
+		dictionary[items[i].name] = dbsession.query(Category).filter_by(id = items[i].category_id).first()
 	return render_template('index.html', categories=categories, items = dictionary)
 
 @app.route('/catalog/<string:categoryName>')
@@ -178,9 +179,7 @@ def addItem(categoryName = ""):
 	dbsession = DBSession()
 	if session['logged_in'] :
 		if request.method == 'POST':
-			print ("im hereee")
 			categoryName = request.form['categoryName']
-			print (categoryName)
 			category = dbsession.query(Category).filter_by(name=categoryName).first()
 			newItem = Item(
 				name=request.form['name'], category_id=category.id, description = request.form['description'])

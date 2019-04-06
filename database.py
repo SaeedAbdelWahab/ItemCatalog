@@ -1,7 +1,8 @@
 import os
 import sys
-from sqlalchemy import Column, ForeignKey, Integer, String
+from sqlalchemy import Column, ForeignKey, Integer, String, DateTime
 from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.sql import func
 from sqlalchemy.orm import relationship
 from sqlalchemy import create_engine
 from passlib.apps import custom_app_context as pwd_context
@@ -39,6 +40,7 @@ class Item(Base):
     name =Column(String(80), nullable = False)
     id = Column(Integer, primary_key = True)
     description = Column(String(250))
+    time_created = Column(DateTime(timezone=True), server_default=func.now())
     category_id = Column(Integer,ForeignKey('Category.id'))
     category = relationship(Category) 
 
