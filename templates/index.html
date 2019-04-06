@@ -16,6 +16,7 @@
 						{% if not session['logged_in'] %}
 						<a class="btn btn-primary login-button" href="{{url_for('login') }}">Login</a>
 						{% else %}
+						<span class="btn btn-primary login-button">Hi, {{session['username']}}</span>
 						<a class="btn btn-primary login-button" href="{{url_for('logout') }}">Logout</a>
 						{% endif %}
 					</div>
