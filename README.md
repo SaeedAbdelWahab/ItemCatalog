@@ -13,8 +13,12 @@ It's built using Flask, SQLAlchemy and OAuth2 using google.
 # Usage
 
 1 - Install Vagrant and VirtualBox
+
 2 - Clone the fullstack-nanodegree-vm (https://github.com/udacity/fullstack-nanodegree-vm)
+
 3 - Launch the Vagrant VM (vagrant up), the full details are in the link provided in the previous point.
+
 4 - Then run main.py using the command (python main.py), note that the backend is written in python 2.7
+
 5 - To login, either use google sign or use the account admin with password admin
 
