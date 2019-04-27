@@ -17,7 +17,7 @@ import json
 from flask import make_response
 import requests
 
-engine = create_engine('sqlite:///CatalogApp.db')
+engine = create_engine('postgresql://catalog:password@localhost/catalog')
 Base.metadata.bind = engine
 DBSession = sessionmaker(bind=engine)
 app = Flask(__name__)
